@@ -3,29 +3,33 @@ import { getUser } from '../services/userAPI';
 
 export class Header extends Component {
   state = {
-    isLoading: false,
+    name: '',
+    isLoading: true,
   };
 
   async componentDidMount() {
-    this.setState({
-      isLoading: true,
-    });
     await getUser();
+    const user = JSON.parse(localStorage.getItem('user'));
+    this.setState({
+      name: user.name,
+      isLoading: false,
+    });
   }
 
   render() {
-    const { isLoading } = this.state;
+    const { name, isLoading } = this.state;
     return (
-      <header data-testid="header-component">
+      <div>
+        <header data-testid="header-component">
+          Header
+        </header>
         {
           isLoading ? <h2>Carregando...</h2> : (
-            <h2>Search</h2>
+            <h2 data-testid="header-user-name">{name}</h2>
           )
         }
-        Header
-      </header>
+      </div>
     );
   }
 }
-
 export default Header;
