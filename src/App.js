@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route,
-  Link, Switch } from 'react-router-dom/cjs/react-router-dom.min';
+  Switch } from 'react-router-dom/cjs/react-router-dom.min';
 import Login from './pages/Login';
 import Search from './pages/Search';
 import Album from './pages/Album';
