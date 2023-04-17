@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Header } from '../components/Header';
 import getMusics from '../services/musicsAPI';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends Component {
   state = {
@@ -10,6 +10,7 @@ class Album extends Component {
     album: '',
     isLoading: false,
     favoriteSongs: {},
+    favoriteSongs2: {},
   };
 
   async componentDidMount() {
@@ -21,10 +22,12 @@ class Album extends Component {
       kind: music.kind,
       trackId: music.trackId,
     }));
+    const favoriteSongs2 = await getFavoriteSongs();
     this.setState({
       musics,
       name: result[0].artistName,
       album: result[0].collectionName,
+      favoriteSongs2,
     });
   }
 
