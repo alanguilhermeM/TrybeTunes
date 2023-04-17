@@ -43,14 +43,15 @@ class Album extends Component {
       ...favoriteSongs,
       [trackId]: !isFavorite, // atualiza o estado da música favorita
     };
-    const id = this.getId();
-    const result = await getMusics(id);
-    const musics = result.filter((music) => music.kind === 'song');
     this.setState({
       isLoading: true,
       favoriteSongs: updatedFavoriteSongs,
     });
-    await addSong(musics);
+    if (updatedFavoriteSongs[trackId]) {
+      const { musics } = this.state;
+      const music = musics.find((musicc) => musicc.trackId === Number(trackId));
+      await addSong(music);
+    }
     this.setState({
       isLoading: false,
     });
