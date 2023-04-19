@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Header } from '../components/Header';
 import getMusics from '../services/musicsAPI';
-import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
+import { addSong } from '../services/favoriteSongsAPI';
 import MusicCard from './MusicCard';
 
 class Album extends Component {
@@ -12,8 +12,6 @@ class Album extends Component {
     album: '',
     isLoading: false,
     favoriteSongs: [],
-    favoriteSongs2: {},
-    checked: false,
   };
 
   async componentDidMount() {
@@ -24,12 +22,10 @@ class Album extends Component {
       kind: music.kind,
       trackId: music.trackId,
     }));
-    const favoriteSongs2 = await this.handleFavoriteSongs();
     this.setState({
       musics,
       name: result[0].artistName,
       album: result[0].collectionName,
-      favoriteSongs2,
     });
   }
 
@@ -42,11 +38,6 @@ class Album extends Component {
   handleMusics = async () => {
     const { match: { params: { id } } } = this.props;
     const result = await getMusics(id);
-    return result;
-  };
-
-  handleFavoriteSongs = async () => {
-    const result = await getFavoriteSongs();
     return result;
   };
 
@@ -90,7 +81,7 @@ class Album extends Component {
   // };
 
   render() {
-    const { musics, name, album, isLoading, checked, favoriteSongs2 } = this.state;
+    const { musics, name, album, isLoading } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
