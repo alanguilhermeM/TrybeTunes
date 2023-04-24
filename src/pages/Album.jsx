@@ -41,23 +41,6 @@ class Album extends Component {
     return result;
   };
 
-  handleFavorite = async (isChecked, music) => {
-    this.setState({
-      isLoading: true,
-    });
-    if (isChecked) {
-      await addSong(music);
-      this.setState((previusState) => ({
-        isLoading: false,
-        favoriteSongs: [...previusState.favoriteSongs, music],
-      }));
-    } else {
-      this.setState({
-        isLoading: false,
-      });
-    }
-  };
-
   // handleFavorite = async (event) => {
   //   const { favoriteSongs } = this.state;
   //   const trackId = event.target.value;
@@ -95,7 +78,6 @@ class Album extends Component {
                   <MusicCard
                     key={ music.trackId }
                     music={ music }
-                    handleFavorite={ this.handleFavorite }
                   />
                   // <div key={ index }>
                   //   <p data-testid="music-name">{ music.musicName }</p>
