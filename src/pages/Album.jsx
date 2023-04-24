@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Header } from '../components/Header';
 import getMusics from '../services/musicsAPI';
-import { addSong } from '../services/favoriteSongsAPI';
 import MusicCard from './MusicCard';
 
 class Album extends Component {
@@ -11,7 +10,6 @@ class Album extends Component {
     name: '',
     album: '',
     isLoading: false,
-    favoriteSongs: [],
   };
 
   async componentDidMount() {

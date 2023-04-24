@@ -5,22 +5,15 @@ import { getFavoriteSongs, removeSong, addSong } from '../services/favoriteSongs
 export default class MusicCard extends Component {
   state = {
     checked: false,
-    isLoading: true,
+    isLoading: false,
   };
 
   async componentDidMount() {
     const { music } = this.props;
     const favorites = await this.handleFavoriteSongs();
     if (favorites !== null) {
-      const isFavorite = favorites
-        .filter((favorite) => favorite.musicName === music.musicName);
-      if (isFavorite.length > 0) {
-        this.setState({
-          checked: true,
-        });
-      }
       this.setState({
-        isLoading: false,
+        checked: favorites.some((favorite) => favorite.trackId === music.trackId),
       });
     }
   }
@@ -34,12 +27,18 @@ export default class MusicCard extends Component {
     });
     if (checked) {
       await addSong(music);
+      this.setState({
+        checked: true,
+      });
       // this.setState((previusState) => ({
       //   isLoading: false,
       //   favoriteSongs: [...previusState.favoriteSongs, music],
       // }));
     } else {
       await removeSong(music);
+      this.setState({
+        checked: false,
+      });
     }
     this.setState({
       isLoading: false,
