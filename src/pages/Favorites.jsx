@@ -1,51 +1,60 @@
 import React, { Component } from 'react';
 import { Header } from '../components/Header';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
+import MusicCard from './MusicCard';
 
 class Favorites extends Component {
   state = {
     favoritesSongs: [],
-    checked: false,
+    isLoading: true,
   };
 
   async componentDidMount() {
-    const favoritesSongs = JSON.parse(localStorage.getItem('favorite_songs'));
+    const favoritesSongs = await this.getFavorites();
     this.setState({
       favoritesSongs,
-      checked: true,
+      isLoading: false,
     });
   }
 
+  getFavorites = async () => {
+    const favorites = await getFavoriteSongs();
+    return favorites;
+  };
+
+  // addSongRender = () => {
+  //   const { favoritesSongs } = this.state;
+  //   const favorites = favoritesSongs.map(({ trackName, audio, kind, trackId }));
+  //   this.setState((previusState) => ({
+  //     favoritesSongs: [...previusState.favoritesSongs, favorites],
+  //   }));
+  // };
+
+  removeSongRender = (trackId) => {
+    this.setState((previusState) => ({
+      favoritesSongs: previusState.favoritesSongs
+        .filter((song) => song.trackId !== trackId),
+    }));
+  };
+
   render() {
-    const { favoritesSongs, checked } = this.state;
+    const { favoritesSongs, isLoading } = this.state;
     return (
       <div data-testid="page-favorites">
         <Header />
         {
-          favoritesSongs.map((favoriteSong) => (
-            <div key={ favoriteSong.trackId }>
-              <p data-testid="music-name">{ favoriteSong.musicName }</p>
-              <audio data-testid="audio-component" src={ favoriteSong.audio } controls>
-                <track kind="captions" />
-                O seu navegador não suporta o elemento
-                {' '}
-                {' '}
-                <code>audio</code>
-                .
-              </audio>
-              <label data-testid={ `checkbox-music-${favoriteSong.trackId}` }>
-                Favorita
-                <input
-                  type="checkbox"
-                  value={ favoriteSong.trackId }
-                  checked={ checked }
-                  // onChange={ ({ target }) => {
-                  //   this.setState({ checked: target.checked });
-                  //   handleFavorite(target.checked, favoriteSong);
-                  // } }
+          isLoading ? <h2>Carregando...</h2> : (
+            favoritesSongs.map((favoriteSong) => (
+              <div key={ favoriteSong.trackId }>
+                <MusicCard
+                  favoritesSongs={ favoritesSongs }
+                  music={ favoriteSong }
+                  removeSongRender={ this.removeSongRender }
+                  addSongRender={ this.addSongRender }
                 />
-              </label>
-            </div>
-          ))
+              </div>
+            ))
+          )
         }
       </div>
     );

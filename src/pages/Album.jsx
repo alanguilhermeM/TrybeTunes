@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Header } from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from './MusicCard';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends Component {
   state = {
@@ -10,56 +11,38 @@ class Album extends Component {
     name: '',
     album: '',
     isLoading: false,
+    favoritesSongs: [],
   };
 
   async componentDidMount() {
     const result = await this.handleMusics();
     const musics = result.map((music) => ({
-      musicName: music.trackName,
+      trackName: music.trackName,
       audio: music.previewUrl,
       kind: music.kind,
       trackId: music.trackId,
     }));
+    const favoritesSongs = await getFavoriteSongs();
     this.setState({
       musics,
       name: result[0].artistName,
       album: result[0].collectionName,
+      favoritesSongs,
     });
   }
 
-  // getId = () => {
-  //   const path = location.pathname;
-  //   const ids = path.split('/');
-  //   const idd = ids[2];
-  //   return idd;
-  // };
+  removeSongRender = (trackId) => {
+    this.setState((previusState) => ({
+      favoritesSongs: previusState.favoritesSongs
+        .filter((song) => song.trackId !== trackId),
+    }));
+  };
+
   handleMusics = async () => {
     const { match: { params: { id } } } = this.props;
     const result = await getMusics(id);
     return result;
   };
-
-  // handleFavorite = async (event) => {
-  //   const { favoriteSongs } = this.state;
-  //   const trackId = event.target.value;
-  //   const isFavorite = favoriteSongs[trackId] || false; // obtém o estado atual da música favorita
-  //   const updatedFavoriteSongs = {
-  //     ...favoriteSongs,
-  //     [trackId]: !isFavorite, // atualiza o estado da música favorita
-  //   };
-  //   this.setState({
-  //     isLoading: true,
-  //   });
-  //   if (updatedFavoriteSongs[trackId]) {
-  //     const { musics } = this.state;
-  //     const music = musics.find((musicc) => musicc.trackId === Number(trackId));
-  //     await addSong(music);
-  //   }
-  //   this.setState({
-  //     isLoading: false,
-  //     favoriteSongs: updatedFavoriteSongs,
-  //   });
-  // };
 
   render() {
     const { musics, name, album, isLoading } = this.state;
@@ -74,32 +57,10 @@ class Album extends Component {
               {musics.filter((music) => music.kind === 'song')
                 .map((music) => (
                   <MusicCard
+                    removeSongRender={ this.removeSongRender }
                     key={ music.trackId }
                     music={ music }
                   />
-                  // <div key={ index }>
-                  //   <p data-testid="music-name">{ music.musicName }</p>
-                  //   <audio data-testid="audio-component" src={ music.audio } controls>
-                  //     <track kind="captions" />
-                  //     O seu navegador não suporta o elemento
-                  //     {' '}
-                  //     {' '}
-                  //     <code>audio</code>
-                  //     .
-                  //   </audio>
-                  //   <label data-testid={ `checkbox-music-${music.trackId}` }>
-                  //     Favorita
-                  //     <input
-                  //       type="checkbox"
-                  //       value={ music.trackId }
-                  //       // checked={ checked }
-                  //       onChange={ this.handleFavorite }
-                  //       checked={ favoriteSongs2.some(
-                  //         (some) => some.trackId === music.trackId,
-                  //       ) }
-                  //     />
-                  //   </label>
-                  // </div>
                 ))}
             </div>
           )

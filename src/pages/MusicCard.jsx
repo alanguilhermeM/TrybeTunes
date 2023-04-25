@@ -18,9 +18,10 @@ export default class MusicCard extends Component {
     }
   }
 
-  handleFavorite = async ({ target }) => {
-    const { checked } = target;
-    const { music } = this.props;
+  handleFavorite = async (event) => {
+    event.preventDefault();
+    const { checked } = event.target;
+    const { music, removeSongRender } = this.props;
     this.setState({
       checked,
       isLoading: true,
@@ -30,21 +31,16 @@ export default class MusicCard extends Component {
       this.setState({
         checked: true,
       });
-      // this.setState((previusState) => ({
-      //   isLoading: false,
-      //   favoriteSongs: [...previusState.favoriteSongs, music],
-      // }));
     } else {
       await removeSong(music);
       this.setState({
         checked: false,
       });
+      removeSongRender(music.trackId);
     }
     this.setState({
       isLoading: false,
     });
-    // const result = await getFavoriteSongs();
-    // return result;
   };
 
   handleFavoriteSongs = async () => {
@@ -58,7 +54,7 @@ export default class MusicCard extends Component {
     return (
       isLoading ? <h2>Carregando...</h2> : (
         <div>
-          <p data-testid="music-name">{ music.musicName }</p>
+          <p data-testid="music-name">{ music.trackName }</p>
           <audio data-testid="audio-component" src={ music.audio } controls>
             <track kind="captions" />
             O seu navegador não suporta o elemento
@@ -84,8 +80,9 @@ export default class MusicCard extends Component {
 
 MusicCard.propTypes = {
   music: PropTypes.shape({
-    musicName: PropTypes.string.isRequired,
+    trackName: PropTypes.string.isRequired,
     audio: PropTypes.string.isRequired,
     trackId: PropTypes.number.isRequired,
   }).isRequired,
+  removeSongRender: PropTypes.func.isRequired,
 };
