@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import { Header } from '../components/Header';
 import { getUser, updateUser } from '../services/userAPI';
 
@@ -9,6 +10,7 @@ class ProfileEdit extends Component {
     profile: {},
     isDisabled: true,
     newProfile: {},
+    isRedirect: '',
   };
 
   async componentDidMount() {
@@ -16,7 +18,7 @@ class ProfileEdit extends Component {
     this.setState({
       isLoading: false,
       profile: user,
-    });
+    }, this.validation);
   }
 
   validation = () => {
@@ -41,15 +43,16 @@ class ProfileEdit extends Component {
     }
   };
 
-  handleClick = async () => {
+  handleClick = async (event) => {
+    event.preventDefault();
     const { newProfile } = this.state;
-    const { history } = this.props;
+    this.setState({ isRedirect: '/profile' });
     await updateUser(newProfile);
-    history.push('/profile');
   };
 
   render() {
-    const { isLoading, profile, isDisabled } = this.state;
+    const { isLoading, profile, isDisabled, isRedirect } = this.state;
+    if (isRedirect) return <Redirect to={ isRedirect } />;
     return (
       <div data-testid="page-profile-edit">
         <Header />
